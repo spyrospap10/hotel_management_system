@@ -289,3 +289,15 @@ label::after {
         opacity: 1;
     }
 }
+
+.btn-edit { background-color: #ffc107; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+.btn-delete { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+.btn-save { background-color: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-right: 5px; }
+.btn-cancel { background-color: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+
+.input-group input {
+    margin: 5px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
