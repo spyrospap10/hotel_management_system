@@ -1,0 +1,3 @@
+command line for frontend:
+1.	cd C:\Projects\Hotel_SpringBoot_React\hotel-frontend
+2.	npm run dev
