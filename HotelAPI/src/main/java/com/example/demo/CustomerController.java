@@ -36,7 +36,7 @@ public class CustomerController {
         customerRepository.deleteById(id);
     }
 
-    // 2. Ενημέρωση (Επεξεργασία) Πελάτη
+    // 2. Ενημέρωση Πελάτη
     @PutMapping("/{id}")
     public Customer updateCustomer(@PathVariable Integer id, @RequestBody Customer updatedCustomer) {
         return customerRepository.findById(id)
@@ -50,8 +50,14 @@ public class CustomerController {
                     customer.setBirth(updatedCustomer.getBirth());
                     customer.setPhoneNumber(updatedCustomer.getPhoneNumber());
                     customer.setEmail(updatedCustomer.getEmail());
+                    customer.setCheckIn(updatedCustomer.getCheckIn());
+                    customer.setCheckOut(updatedCustomer.getCheckOut());
                     return customerRepository.save(customer);
                 }).orElseThrow(() -> new RuntimeException("Customer not found"));
     }
 
+    @GetMapping("/unassigned")
+    public List<Customer> getUnassignedCustomers() {
+        return customerRepository.findByRoomIsNull();
+    }
 }

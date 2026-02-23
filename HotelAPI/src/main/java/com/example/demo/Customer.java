@@ -1,6 +1,8 @@
 package com.example.demo;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "customer")
@@ -28,7 +30,7 @@ public class Customer {
     private String gender;
 
     @Column (name = "birth")
-    private java.time.LocalDate birth;
+    private LocalDate birth;
 
     @Column (name = "phonenumber")
     private String phoneNumber;
@@ -36,6 +38,16 @@ public class Customer {
     @Column (name = "email")
     private String email;
 
+    @Column (name = "checkIn")
+    private LocalDate checkIn;
+
+    @Column (name = "checkOut")
+    private LocalDate checkOut;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    @JsonIgnore
+    private Room room;
 
     public Integer getId () { return id; }
     public String getLastName () { return lastName; }
@@ -43,10 +55,12 @@ public class Customer {
     public String getNationality () { return nationality; }
     public String getPassport () { return passport; }
     public String getGender () {return gender; }
-    public java.time.LocalDate getBirth () { return birth; }
+    public LocalDate getBirth () { return birth; }
     public String getPhoneNumber () { return phoneNumber; }
     public String getEmail () { return email; }
-
+    public LocalDate getCheckIn () { return checkIn; }
+    public LocalDate getCheckOut () { return checkOut; }
+    public Room getRoom () { return room; }
 
     public void setId (Integer id) { this.id = id; }
     public void setLastName (String lastName) { this.lastName = lastName; }
@@ -54,9 +68,11 @@ public class Customer {
     public void setNationality (String nationality) { this.nationality = nationality; }
     public void setPassport (String passport) { this.passport = passport; }
     public void setGender (String gender) { this.gender = gender; }
-    public void setBirth (java.time.LocalDate birth) { this.birth = birth; }
+    public void setBirth (LocalDate birth) { this.birth = birth; }
     public void setPhoneNumber (String phoneNumber) { this.phoneNumber = phoneNumber; }
     public void setEmail (String email) { this.email = email; }
-
+    public void setCheckIn (LocalDate checkIn) { this.checkIn = checkIn; }
+    public void setCheckOut (LocalDate checkOut) { this.checkOut = checkOut; }
+    public void setRoom (Room room) { this.room = room; }
 
 }

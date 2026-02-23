@@ -1,22 +1,31 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function CustomerForm() {
-    // Η αρχική κατάσταση (άδεια πεδία)
+    // 1. Προσθήκη checkIn και checkOut στην αρχική κατάσταση
     const initialState = {
         lastName: '', firstName: '', nationality: '', gender: 'Άντρας',
-        birth: '', idType: 'Ταυτότητα', passport: '', phoneNumber: '', email: ''
+        birth: '', idType: 'Ταυτότητα', passport: '', phoneNumber: '', email: '',
+        checkIn: '', checkOut: '' // <--- ΝΕΑ ΠΕΔΙΑ
     };
 
     const [formData, setFormData] = useState(initialState);
-
     const [nationalities, setNationalities] = useState([]);
+    // 2. Νέο state για να κρατάμε τους πελάτες για το dropdown
+    const [customers, setCustomers] = useState([]);
 
-    // Μόλις ανοίξει η φόρμα, φέρε τις χώρες από το Backend
+    // Μόλις ανοίξει η φόρμα, φέρε τις χώρες ΚΑΙ τους πελάτες από το Backend
     useEffect(() => {
+        // Φόρτωση Εθνικοτήτων
         fetch('http://localhost:8080/api/nationalities')
             .then(res => res.json())
             .then(data => setNationalities(data))
             .catch(err => console.error("Σφάλμα στη φόρτωση εθνικοτήτων:", err));
+
+        // Φόρτωση Πελατών (για το dropdown "Ταξιδεύω με")
+        fetch('http://localhost:8080/api/customers')
+            .then(res => res.json())
+            .then(data => setCustomers(data))
+            .catch(err => console.error("Σφάλμα στη φόρτωση πελατών:", err));
     }, []);
 
     const handleChange = (e) => {
@@ -33,7 +42,7 @@ function CustomerForm() {
         })
             .then(() => {
                 alert('Ο πελάτης αποθηκεύτηκε!');
-                setFormData(initialState); // <--- ΕΔΩ ΤΟ ΜΑΓΙΚΟ: Επαναφορά στο αρχικό!
+                setFormData(initialState); // Επαναφορά στο αρχικό (θα αδειάσουν και οι ημερομηνίες)
             })
             .catch(err => alert('Σφάλμα: ' + err));
     };
@@ -51,11 +60,8 @@ function CustomerForm() {
                 <label>Εθνικότητα *</label>
                 <select name="nationality" value={formData.nationality} onChange={handleChange}>
                     <option value="">Επιλέξτε...</option>
-
                     {nationalities.map(nat => (
-                        <option key={nat.id} value={nat.name}>
-                            {nat.name}
-                        </option>
+                        <option key={nat.id} value={nat.name}>{nat.name}</option>
                     ))}
                 </select>
 
@@ -82,7 +88,42 @@ function CustomerForm() {
                 <label>Email</label>
                 <input type="email" name="email" value={formData.email} onChange={handleChange} />
 
-                <button type="submit" className="save-btn">Αποθήκευση</button>
+                {/* --- ΝΕΑ ΠΕΔΙΑ ΓΙΑ ΚΡΑΤΗΣΗ --- */}
+                <hr style={{ margin: '15px 0', border: '0.5px solid #ccc' }} />
+
+                <label>Ταξιδεύω με:</label>
+                <select
+                    onChange={(e) => {
+                        const companionId = e.target.value;
+                        if (companionId) {
+                            const companion = customers.find(c => c.id === parseInt(companionId));
+                            if (companion) {
+                                // Ενημερώνουμε το formData με τις ημερομηνίες του συνοδού
+                                setFormData({
+                                    ...formData,
+                                    checkIn: companion.checkIn || '',
+                                    checkOut: companion.checkOut || ''
+                                });
+                            }
+                        }
+                    }}
+                >
+                    <option value="">Επιλέξτε πελάτη (προαιρετικό)...</option>
+                    {customers.map(c => (
+                        <option key={c.id} value={c.id}>
+                            {c.lastName} {c.firstName}
+                        </option>
+                    ))}
+                </select>
+
+                <label>Check In</label>
+                <input type="date" name="checkIn" value={formData.checkIn} onChange={handleChange} />
+
+                <label>Check Out</label>
+                <input type="date" name="checkOut" value={formData.checkOut} onChange={handleChange} />
+                {/* ----------------------------- */}
+
+                <button type="submit" className="save-btn" style={{ marginTop: '20px' }}>Αποθήκευση</button>
             </form>
         </div>
     );

@@ -61,8 +61,13 @@ function CustomerList() {
                     <th>Επώνυμο</th>
                     <th>Όνομα</th>
                     <th>Εθνικότητα</th>
+                    <th>Ταυτότητα/Διαβατήριο</th>
+                    <th>Φύλο</th>
+                    <th>Ημ/νία Γέννησης</th>
                     <th>Τηλέφωνο</th>
                     <th>Email</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -81,37 +86,82 @@ function CustomerList() {
                             <td>{c.lastName}</td>
                             <td>{c.firstName}</td>
                             <td>{c.nationality}</td>
+                            <td>{c.passport}</td>
+                            <td>{c.gender}</td>
+                            <td>{c.birth}</td>
                             <td>{c.phoneNumber}</td>
                             <td>{c.email}</td>
+                            <td>{c.checkIn}</td>
+                            <td>{c.checkOut}</td>
                         </tr>
 
                         {selectedCustomerId === c.id && (
                             <tr className="actions-row">
-                                <td colSpan="6" style={{ padding: '15px', backgroundColor: '#f8f9fa' }}>
+                                <td colSpan="11" style={{ padding: '15px', backgroundColor: '#f8f9fa' }}>
                                     {editData ? (
                                         /* --- ΦΟΡΜΑ ΕΠΕΞΕΡΓΑΣΙΑΣ --- */
                                         <div className="edit-form-inline">
-                                            <h4>Επεξεργασία Στοιχείων</h4>
+                                            <h4>Επεξεργασία Στοιχείων & Κράτησης</h4>
                                             <div className="input-group">
                                                 <input
                                                     type="text"
-                                                    value={editData.lastName}
+                                                    value={editData.lastName || ''}
                                                     onChange={e => setEditData({...editData, lastName: e.target.value})}
                                                     placeholder="Επώνυμο"
                                                 />
                                                 <input
                                                     type="text"
-                                                    value={editData.firstName}
+                                                    value={editData.firstName || ''}
                                                     onChange={e => setEditData({...editData, firstName: e.target.value})}
                                                     placeholder="Όνομα"
                                                 />
+
+                                                {/* ΝΕΟ: Dropdown "Ταξιδεύω με:" */}
+                                                <select
+                                                    onChange={(e) => {
+                                                        const companionId = e.target.value;
+                                                        if (companionId) {
+                                                            // Βρίσκουμε τον πελάτη που επιλέχθηκε από την πλήρη λίστα customers
+                                                            const companion = customers.find(c => c.id === parseInt(companionId));
+                                                            if (companion) {
+                                                                // Αντιγράφουμε τις ημερομηνίες του στον τωρινό πελάτη!
+                                                                setEditData({
+                                                                    ...editData,
+                                                                    checkIn: companion.checkIn || '',
+                                                                    checkOut: companion.checkOut || ''
+                                                                });
+                                                            }
+                                                        }
+                                                    }}
+                                                    title="Ταξιδεύω με..."
+                                                    style={{ margin: '5px', padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
+                                                >
+                                                    <option value="">Ταξιδεύω με...</option>
+                                                    {customers
+                                                        .filter(c => c.id !== editData.id) // Να μην βλέπει τον εαυτό του στη λίστα
+                                                        .map(c => (
+                                                            <option key={c.id} value={c.id}>
+                                                                {c.lastName} {c.firstName}
+                                                            </option>
+                                                        ))
+                                                    }
+                                                </select>
+
+                                                {/* ΝΕΟ: Πεδία Ημερομηνιών */}
                                                 <input
-                                                    type="text"
-                                                    value={editData.nationality}
-                                                    onChange={e => setEditData({...editData, nationality: e.target.value})}
-                                                    placeholder="Εθνικότητα"
+                                                    type="date"
+                                                    value={editData.checkIn || ''}
+                                                    onChange={e => setEditData({...editData, checkIn: e.target.value})}
+                                                    title="Check In"
+                                                />
+                                                <input
+                                                    type="date"
+                                                    value={editData.checkOut || ''}
+                                                    onChange={e => setEditData({...editData, checkOut: e.target.value})}
+                                                    title="Check Out"
                                                 />
                                             </div>
+
                                             <div className="button-group" style={{ marginTop: '10px' }}>
                                                 <button onClick={handleSave} className="btn-save">Αποθήκευση ✅</button>
                                                 <button onClick={() => setEditData(null)} className="btn-cancel">Ακύρωση ❌</button>

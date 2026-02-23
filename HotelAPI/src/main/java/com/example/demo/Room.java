@@ -1,9 +1,7 @@
 package com.example.demo;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "room")
@@ -29,6 +27,8 @@ public class Room {
     @Column(name = "seaView")
     private Boolean seaView;
 
+    @OneToMany(mappedBy = "room")
+    private List<Customer> customers;
 
     // ----------- Getters -----------
     public Integer getRoomNumber() { return roomNumber; }
@@ -37,6 +37,7 @@ public class Room {
     public RoomStatus getStatus() { return status; }
     public Double getPrice() { return price; }
     public Boolean getSeaView() { return seaView; }
+    public List<Customer> getCustomers() { return customers; }
 
     // ----------- Setters -----------
     public void setRoomNumber(Integer roomNumber) { this.roomNumber = roomNumber; }
@@ -45,4 +46,5 @@ public class Room {
     public void setStatus(RoomStatus status) { this.status = status; }
     public void setPrice(Double price) { this.price = price; }
     public void setSeaView(Boolean seaView) { this.seaView = seaView; };
+    public void setCustomers (List<Customer> customers) { this.customers = customers; }
 }
